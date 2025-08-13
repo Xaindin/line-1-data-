@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Line 1 — Player Intake</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#f7f7fb}
+  .container{max-width:760px;margin:0 auto;padding:16px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+  label{display:block;font-size:12px;color:#64748b;margin:6px 0 4px}
+  input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font-size:14px;background:#fff}
+  textarea{min-height:90px;resize:vertical}
+  .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-12{grid-column:span 12}
+  .btn{border:1px solid #cbd5e1;background:white;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}
+  .btn.primary{background:linear-gradient(135deg,#3b82f6,#60a5fa);color:white;border-color:transparent}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .note{font-size:12px;color:#6b7280}
+  h2{margin:0 0 6px 0}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Line 1 — Player Intake</h2>
+  <div class="note">Fill the details below. Player ID must be from A01–A20.</div>
+
+  <form id="line1Form" class="card">
+    <div class="grid">
+      <div class="col-4">
+        <label>🗂️ Line 1 Player ID *</label>
+        <select id="playerId" name="playerId" required>
+          <option value="">Select</option>
+        </select>
+      </div>
+      <div class="col-8">
+        <label>PLAYER NAME *</label>
+        <input name="playerName" placeholder="e.g. John Doe" required />
+      </div>
+
+      <div class="col-12">
+        <label>🧑‍💼 Customer</label>
+        <input name="customerName" placeholder="e.g. Sayyad Mohammad Tameem" />
+      </div>
+
+      <div class="col-6">
+        <label>📞 Number</label>
+        <input name="number" type="tel" placeholder="e.g. 9959152719" />
+      </div>
+      <div class="col-6">
+        <label>🗣️ Language</label>
+        <select name="language">
+          <option value=""></option>
+          <option>Hindi</option>
+          <option>English</option>
+          <option>Gujarati</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="col-3">
+        <label>🎂 Age</label>
+        <input name="age" placeholder="e.g. 26 or N/A" />
+      </div>
+      <div class="col-3">
+        <label>🚻 Gender</label>
+        <select name="gender">
+          <option value=""></option>
+          <option>male</option>
+          <option>female</option>
+          <option>other</option>
+        </select>
+      </div>
+
+      <div class="col-6">
+        <label>📍 Location</label>
+        <input name="location" placeholder="e.g. Andhra Pradesh" />
+      </div>
+
+      <div class="col-6">
+        <label>🏭 Profession</label>
+        <input name="profession" placeholder="e.g. N/A" />
+      </div>
+
+      <div class="col-12">
+        <label>📝 Remarks</label>
+        <textarea name="remarks" placeholder="e.g. cooperative"></textarea>
+      </div>
+    </div>
+
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      <span class="note" id="submitNote">Submitting to Sheet tab: <strong>line 1 data</strong></span>
+      <button class="btn primary" type="submit">Submit</button>
+    </div>
+
+    <div id="status" style="margin-top:10px"></div>
+  </form>
+</div>
+
+<script>
+/* ---------- CONFIG (your URL & tab name already set) ---------- */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw68BhoJ85_0HXaoIFajmBKygu3eSDxJ8Qdvf5Rb7wjbLOhcNZ9B8wnCPren7-TQ0aGDw/exec';
+const SHEET_NAME = 'line 1 data';
+
+/* ---------- Populate Player ID A01–A20 ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('playerId');
+  for (let i=1;i<=20;i++){
+    const id = 'A'+String(i).padStart(2,'0'); // A01..A20
+    const opt = document.createElement('option');
+    opt.value = id; opt.textContent = id;
+    sel.appendChild(opt);
+  }
+});
+
+/* ---------- Submit to Google Sheet ---------- */
+const form = document.getElementById('line1Form');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('status');
+  status.textContent = 'Submitting…';
+
+  const fd = new FormData(form);
+  fd.append('sheetName', SHEET_NAME);
+
+  try {
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(fd) });
+    status.innerHTML = '<span style="color:#065f46;background:#ecfdf5;border:1px solid #10b981;padding:6px 10px;border-radius:999px">Submitted!</span>';
+    form.reset();
+    // re-populate the first option ("Select") after reset keeps dropdown intact
+  } catch (err) {
+    console.error(err);
+    status.innerHTML = '<span style="color:#991b1b;background:#fef2f2;border:1px solid #ef4444;padding:6px 10px;border-radius:999px">Network error</span>';
+  }
+});
+</script>
+</body>
+</html>
